@@ -1,0 +1,131 @@
+[tool.poetry]
+name = "cybulde-data"
+version = "0.1.0"
+description = "Data processing and versioning for Cyber-bullying Detection on Social Media"
+authors = ["Kıvanç Yüksel <emkademy@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">3.9.4,<3.11,!=3.9.7"
+pandas = "~=1.4.4"
+hydra-core = "~=1.2.0"
+pydantic = "~=1.9.2"
+nltk = "~=3.7"
+symspellpy = "~=6.7.6"
+fsspec = {version = "~=2022.11.0", extras = ["gcs"]}
+gcsfs = "~=2022.11.0"
+google-cloud-secret-manager = "~=2.12.4"
+google-cloud-artifact-registry = "~=1.3.3"
+fastparquet = "~=0.8.3"
+dvc = {version = "~=2.34.2", extras = ["gdrive", "gs"]}
+dask = {version = "~=2022.9.2", extras = ["complete"]}
+distributed = "~=2022.9.2"
+dask-cloudprovider = {version = "~=2022.8.0", extras = ["gcp"]}
+dask-ml = "~=2022.5.27"
+tokenizers = "~=0.13.1"
+crcmod = "~=1.7"
+fastapi = "~=0.88.0"
+uvicorn = {version = "~=0.20.0", extras = ["standard"]}
+
+[tool.poetry.group.dev.dependencies]
+jupyterlab = "~=3.4.5"
+tqdm = "~=4.64.0"
+coverage = {version = "~=6.4.4", extras = ["toml"]}
+pytest = "~=7.1.2"
+pytest-cov = "~=3.0.0"
+pytest-xdist = "~=2.5.0"
+pytest-sugar = "~=0.9.5"
+pytest-mock = "~=3.8.2"
+pytest-clarity = "~=1.0.1"
+isort = "~=5.10.1"
+black = "==22.8.0"
+flake8 = "~=6.0.0"
+flake8-import-order = "~=0.18.2"
+mypy = ">=0.971"
+
+types-pyyaml = "~=6.0.12.2"
+types-cryptography = "~=3.3.23.2"
+types-paramiko = "~=2.12.0.1"
+types-protobuf = "~=4.21.0.1"
+types-pyopenssl = "~22.1.0.2"
+types-python-dateutil = "~=2.8.19.4"
+types-requests = "~=2.28.11.5"
+types-setuptools = "~=65.6.0.1"
+types-urllib3 = "~=1.26.25.4"
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true
+ensure_newline_before_comments = true
+line_length = 120
+indent = 4
+lines_between_types = 1
+known_first_party = ["cybulde", "tests"]
+default_section = "THIRDPARTY"
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+[tool.mypy]
+python_version = 3.9
+show_error_codes = true
+ignore_missing_imports = true
+install_types = true
+non_interactive = true
+follow_imports = "silent"
+no_strict_optional = true
+
+warn_redundant_casts = false
+warn_unused_ignores = true
+warn_unused_configs = true
+warn_return_any = true
+warn_no_return = true
+warn_incomplete_stub = true
+
+disallow_subclassing_any = true
+
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+check_untyped_defs = true
+strict_optional = true
+
+verbosity = 0
+
+[tool.mypy-pytest]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+python_files = "tests.py tests_*.py test_*.py testing_*.py"
+addopts = "-s -q -vv --disable-warnings --doctest-modules --cov-config=pyproject.toml --cov-report=xml"
+norecursedirs = ".git .cache tmp* creds docker docs notebooks references scripts .mypy_cache dist"
+testpaths= "tests"
+
+[tool.coverage.run]
+branch = true
+source = "."
+omit = ["*tests*", "*conftest.py"]
+data_file = ".unitreports/.covarage"
+
+[tool.coverage.xml]
+output = ".unitreports/coverage.xml"
+
+[tool.coverage.report]
+skip_covered = true
+show_missing = true
+sort = "Cover"
+
+[tool.pyright]
+include = ["cybulde", "tests"]
+exclude = ["**/__pycache__"]
+
+reportMissingImports = true
+reportMissingTypeStubs = false
+
+pythonVersion = "3.9"
+pythonPlatform = "Linux"
