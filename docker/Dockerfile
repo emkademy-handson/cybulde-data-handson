@@ -19,7 +19,7 @@ RUN apt-get -qq update \
 
 # Install gcloud and gsutil
 RUN curl https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-396.0.0-linux-x86_64.tar.gz > /tmp/google-cloud-sdk.tar.gz
-RUN mkdr -p /usr/local/gcloud \
+RUN mkdir -p /usr/local/gcloud \
     && tar -C /usr/local/gcloud -xf /tmp/google-cloud-sdk.tar.gz \
     && /usr/local/gcloud/google-cloud-sdk/install.sh --usage-reporting false --command-completion true --bash-completion true --path-update true --quiet
 

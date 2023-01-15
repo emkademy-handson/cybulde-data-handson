@@ -6,17 +6,17 @@ services:
     container_name: cybulde-data
     build:
       context: .
-      docker: ./docker/Dockerfile
+      dockerfile: ./docker/Dockerfile
       args:
         USER_NAME: "${USER_NAME:-kyuksel}"
         USER_ID: "${UID:-1000}"
-      env_file:
-        - .envs/.app
-      volumes:
-        - ./:/app/
-        - ~/.config/gcloud/:/home/${USER_NAME}/.config/gcloud
-        - ~/.ssh:/home/${USER_NAME}/.ssh
-      ipc: host
-      init: true
-      user: "${UID:-1000}"
-      hostname: emkademy
+    env_file:
+      - .envs/.app
+    volumes:
+      - ./:/app/
+      - ~/.config/gcloud/:/home/${USER_NAME}/.config/gcloud
+      - ~/.ssh:/home/${USER_NAME}/.ssh
+    ipc: host
+    init: true
+    user: "${UID:-1000}"
+    hostname: emkademy

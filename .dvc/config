@@ -3,4 +3,4 @@
     autostage = true
     remote = gcs-storage
 ['remote "gcs-storage"']
-    url = gs://cybulde/data/
+    url = gs://cybulde/data/raw/
