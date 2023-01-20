@@ -43,7 +43,7 @@ def make_new_data_version(dvc_raw_data_folder: str, dvc_remote_name: str) -> Non
 
 
 def commit_to_dvc(dvc_raw_data_folder: str, dvc_remote_name: str) -> None:
-    current_version = ""
+    current_version = run_shell_command("git tag --list | sort -t v -k 2 -g | tail -1 | sed 's/v//'")
     if not current_version:
         current_version = "0"
     next_version = f"v{int(current_version)+1}"
