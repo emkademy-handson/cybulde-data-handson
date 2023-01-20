@@ -20,6 +20,10 @@ endif
 DOCKER_COMPOSE_RUN = $(DOCKER_COMPOSE_COMMAND) run --rm $(SERVICE_NAME)
 DOCKER_COMPOSE_EXEC = $(DOCKER_COMPOSE_COMMAND) exec $(SERVICE_NAME)
 
+## Version data
+version-data: up
+	$(DOCKER_COMPOSE_EXEC) python ./cybulde/version_data.py
+
 ## Builds docker image
 build:
 	$(DOCKER_COMPOSE_COMMAND) build $(SERVICE_NAME)
