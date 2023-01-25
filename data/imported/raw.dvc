@@ -1,0 +1,13 @@
+md5: 6273fec1777ef2094ae4dac46634b443
+frozen: true
+deps:
+- path: data/raw
+  repo:
+    url: https://emkademy-handson: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@github.com/emkademy-handson/cybulde-data-handson.git
+    rev: v3
+    rev_lock: 822919c04e8be8399a1c565085868cae60e3a685
+outs:
+- md5: dd4036a764a299fc7569bb329b856c60.dir
+  size: 165397912
+  nfiles: 9
+  path: raw

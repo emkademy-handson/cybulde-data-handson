@@ -3,8 +3,7 @@ from subprocess import CalledProcessError
 
 from cybulde.utils.utils import get_logger, run_shell_command
 
-
-DATA_UTILS_LOGGER =  get_logger(Path(__file__).name)
+DATA_UTILS_LOGGER = get_logger(Path(__file__).name)
 
 
 def is_dvc_initialized() -> bool:
@@ -54,3 +53,46 @@ def commit_to_dvc(dvc_raw_data_folder: str, dvc_remote_name: str) -> None:
     run_shell_command(f"dvc push {dvc_raw_data_folder}.dvc --remote {dvc_remote_name}")
     run_shell_command("git push --follow-tags")
     run_shell_command("git push -f --tags")
+
+
+def get_cmd_to_get_raw_data(
+    version: str,
+    raw_data_local_save_dir: str,
+    dvc_raw_data_remote_repo: str,
+    dvc_raw_data_folder: str,
+    github_user_name: str,
+    github_access_token: str,
+) -> str:
+    """Get shell command to download the raw data from dvc store
+
+    Parameters:
+    -----------
+    version: str
+        data version
+    raw_data_local_save_dir: str
+        where to save the downloaded data
+    dvc_raw_data_remote_repo: str
+        DVC repositroy that holds information about the data
+    dvc_raw_data_folder: str
+        location where the remote data is stored
+    github_user_name: str
+        github user name
+    github_access_token: str
+        github access token
+
+    Returns
+    -------
+    str
+        shell command to download raw data from DVC
+    """
+    raw_data_local_save_dir_path = Path(raw_data_local_save_dir)
+
+    if raw_data_local_save_dir_path.exists():
+        dvc_file = f"{raw_data_local_save_dir}{Path(dvc_raw_data_folder).name}.dvc"
+        cmd = f"dvc update {dvc_file} --rev {version}"
+    else:
+        raw_data_local_save_dir_path.mkdir(parents=True, exist_ok=True)
+        without_https = dvc_raw_data_remote_repo.replace("https://", "") 
+        dvc_remote_repo = f"https://{github_user_name}:{github_access_token}@{without_https}"
+        cmd = f"dvc import {dvc_remote_repo} {dvc_raw_data_folder} --rev {version} -o {raw_data_local_save_dir}" 
+    return cmd

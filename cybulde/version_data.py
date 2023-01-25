@@ -1,9 +1,8 @@
 from pathlib import Path
+
 from cybulde.config_schemas.raw_data_schema import RawDataConfig
 from cybulde.utils.config_utils import get_config
 from cybulde.utils.data_utils import initialize_dvc, initialize_dvc_storage, make_new_data_version
-
-
 from cybulde.utils.utils import get_logger
 
 
@@ -18,4 +17,4 @@ def version_data(config: RawDataConfig) -> None:
 
 
 if __name__ == "__main__":
-    version_data()  # type: ignore
+    version_data()

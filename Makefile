@@ -11,6 +11,8 @@ BUILD_POETRY_LOCK = /home/$(USER_NAME)/poetry.lock.build
 CONTAINER_NAME = cybulde-data
 SERVICE_NAME = app
 
+DIRS_TO_VALIDATE = cybulde
+
 ifeq (, $(shell which docker-compose))
 	DOCKER_COMPOSE_COMMAND = docker compose
 else
@@ -24,6 +26,37 @@ DOCKER_COMPOSE_EXEC = $(DOCKER_COMPOSE_COMMAND) exec $(SERVICE_NAME)
 version-data: up
 	$(DOCKER_COMPOSE_EXEC) python ./cybulde/version_data.py
 
+## Get raw data
+get-raw-data: up
+	$(DOCKER_COMPOSE_EXEC) python ./cybulde/get_raw_data.py
+
+## Process raw data
+process-data: up
+	$(DOCKER_COMPOSE_EXEC) python ./cybulde/process_data.py
+
+## Starts jupyter lab
+notebook: up
+	$(DOCKER_COMPOSE_EXEC) jupyter-lab --ip 0.0.0.0 --port 8888 --no-browser
+
+## Sort imports with isort
+sort: up
+	$(DOCKER_COMPOSE_EXEC) isort --atomic $(DIRS_TO_VALIDATE)
+
+## Format code with black
+format: up
+	$(DOCKER_COMPOSE_EXEC) black $(DIRS_TO_VALIDATE)
+
+## Format and sort
+format-and-sort: format sort
+
+## Lint using flake8
+lint: up
+	$(DOCKER_COMPOSE_EXEC) flake8 $(DIRS_TO_VALIDATE)
+
+## Check type annotations with mypy
+check-type-annotations: up
+	$(DOCKER_COMPOSE_EXEC) mypy $(DIRS_TO_VALIDATE)
+
 ## Builds docker image
 build:
 	$(DOCKER_COMPOSE_COMMAND) build $(SERVICE_NAME)
@@ -35,6 +68,9 @@ build-for-dependencies:
 ## Runs the docker container
 up:
 	@$(DOCKER_COMPOSE_COMMAND) up -d --remove-orphans
+
+down:
+	@$(DOCKER_COMPOSE_COMMAND) down
 
 ## Opens an interactive shell in the docker container
 exec-in: up

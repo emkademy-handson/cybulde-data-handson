@@ -1,0 +1,7 @@
+
+defaults:
+  - ghc_dataset_reader_schema
+
+dataset_dir: ${raw_data_gcs_location}/raw/ghc
+dev_set_ratio: 0.3
+dataset_name: ghc

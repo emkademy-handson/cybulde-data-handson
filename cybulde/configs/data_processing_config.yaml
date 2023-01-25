@@ -1,6 +1,8 @@
 defaults:
-  - raw_data_schema
+  - data_processing_schema
   - infrastructure: gcp_schema
+
+  - dataset_reader_manager: ghc_jigsaw_twitter
 
   - override hydra/job_logging: custom
   - override hydra/hydra_logging: disabled
@@ -11,5 +13,3 @@ hydra:
   run:
     dir: .
 
-version: v3
-raw_data_local_save_dir: ./data/imported/
