@@ -1,0 +1,8 @@
+
+defaults:
+  - twitter_dataset_reader_schema
+
+dataset_dir: ${raw_data_gcs_location}/raw/twitter
+dev_set_ratio: 0.25
+test_set_ratio: 0.2
+dataset_name: twitter

@@ -21,7 +21,8 @@ class DatasetReader(ABC):
         self.dataset_name = dataset_name
 
     def read_data(self) -> dd.core.DataFrame:
-        df = self._read_data()
+        train_df, dev_df, test_df = self._read_data()
+        df = self.assign_set_names_to_data_frames_and_merge(train_df, dev_df, test_df)
         df["dataset_name"] = self.dataset_name
         if any(required_column not in df.columns.values for required_column in self.required_columns):
             raise RuntimeError(f"{self.__class__.__name__}._read_data method should return a DataFrame with columns: {self.required_columns}")
@@ -32,7 +33,7 @@ class DatasetReader(ABC):
         return df
  
     @abstractmethod
-    def _read_data(self) -> dd.core.DataFrame:
+    def _read_data(self) -> tuple[dd.core.DataFrame, dd.core.DataFrame, dd.core.DataFrame]:
         """
         Read and split dataset into 3 sets: train, dev, test.
         The return value must be a dd.core.DataFrame, with required columns: self.required_columns
@@ -55,6 +56,12 @@ class DatasetReader(ABC):
 
         return first_df, second_df
 
+    def assign_set_names_to_data_frames_and_merge(self, train_df: dd.core.DataFrame, dev_df: dd.core.DataFrame, test_df: dd.core.DataFrame) -> dd.core.DataFrame:
+        train_df["set"] = "train"
+        dev_df["set"] = "dev"
+        test_df["set"] = "test"
+        return dd.concat([train_df, dev_df, test_df])
+
 
 class GHCDatasetReader(DatasetReader):
     def _read_data(self) -> dd.core.DataFrame:
@@ -66,11 +73,52 @@ class GHCDatasetReader(DatasetReader):
         test_df["label"] = (test_df["hd"] + test_df["cv"] + test_df["vo"] > 0).astype(int)
 
         train_df, dev_df = self.split_dataset(train_df, self.dev_set_ratio, stratify_column="label")
-        train_df["set"] = "train"
-        dev_df["set"] = "dev"
-        test_df["set"] = "test"
+        return train_df, dev_df, test_df
 
-        return dd.concat([train_df, dev_df, test_df])
+
+class JigsawToxicCommentsDatasetReader(DatasetReader):
+    def __init__(self, dataset_dir: str, dev_set_ratio: float, test_set_ratio: float, dataset_name: str) -> None:
+        super().__init__(dataset_dir, dev_set_ratio, test_set_ratio, dataset_name)
+        self.columns_for_label = ["toxic", "severe_toxic", "obscene", "threat", "insult", "identity_hate"]
+
+    def _read_data(self) -> dd.core.DataFrame:
+        self.logger.info("Reading JigsawToxicComments data...")
+        test_df = self.merge_test_data_and_labels()
+        test_df = self.filter_not_used_rows_from_test_data_frame(test_df)
+        test_df = self.get_text_and_label_columns(test_df)
+
+        train_df = dd.read_csv(os.path.join(self.dataset_dir, "train.csv"))
+        train_df = self.get_text_and_label_columns(train_df)
+
+        train_df, dev_df = self.split_dataset(train_df, self.dev_set_ratio, stratify_column="label")
+        return train_df, dev_df, test_df
+
+    def merge_test_data_and_labels(self) -> dd.core.DataFrame:
+        test_df = dd.read_csv(os.path.join(self.dataset_dir, "test.csv"))
+        test_labels_df = dd.read_csv(os.path.join(self.dataset_dir, "test_labels.csv"))
+        test_df = test_df.merge(test_labels_df, on=["id"])
+        return test_df
+
+    def filter_not_used_rows_from_test_data_frame(self, test_df: dd.core.DataFrame) -> dd.core.DataFrame:
+        test_df = test_df[test_df["toxic"]!=-1]
+        return test_df
+
+    def get_text_and_label_columns(self, df: dd.core.DataFrame) -> dd.core.DataFrame:
+        df["label"] = (df[self.columns_for_label].sum(axis=1) > 0).astype(int)
+        df_renamed = df.rename(columns={"comment_text": "text"})
+        return df_renamed[["text", "label"]]
+
+
+class TwitterDatasetReader(DatasetReader):
+    def _read_data(self) -> dd.core.DataFrame:
+        self.logger.info("Reading Twitter data...")
+        df = dd.read_csv(os.path.join(self.dataset_dir, "cyberbullying_tweets.csv"))
+        df = df.rename(columns={"tweet_text": "text", "cyberbullying_type": "label"})
+        df["label"] = (df["label"] != "not_cyberbullying").astype(int)
+
+        train_df, test_df = self.split_dataset(df, self.test_set_ratio, "label")
+        train_df, dev_df = self.split_dataset(train_df, self.dev_set_ratio, "label")
+        return train_df, dev_df, test_df
 
 
 class DatasetReaderManager:

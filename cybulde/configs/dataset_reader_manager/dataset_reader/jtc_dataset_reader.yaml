@@ -1,0 +1,7 @@
+
+defaults:
+  - jtc_dataset_reader_schema
+
+dataset_dir: ${raw_data_gcs_location}/raw/jigsaw-toxic-comments
+dev_set_ratio: 0.06
+dataset_name: jigsaw_toxic_comments

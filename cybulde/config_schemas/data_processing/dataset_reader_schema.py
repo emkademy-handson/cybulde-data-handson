@@ -21,6 +21,16 @@ class GHCDatasetReaderConfig(DatasetReaderConfig):
 
 
 @dataclass
+class JigsawToxicCommentsDatasetReaderConfig(DatasetReaderConfig):
+    _target_: str = "cybulde.data_processing.dataset_readers.JigsawToxicCommentsDatasetReader"
+
+
+@dataclass
+class TwitterDatasetReaderConfig(DatasetReaderConfig):
+    _target_: str = "cybulde.data_processing.dataset_readers.TwitterDatasetReader"
+
+
+@dataclass
 class DatasetReaderManagerConfig:
     _target_: str = "cybulde.data_processing.dataset_readers.DatasetReaderManager"
     dataset_readers: list[DatasetReaderConfig] = field(default_factory=lambda: [])
@@ -31,5 +41,7 @@ def setup_config() -> None:
     cs = ConfigStore.instance()
 
     cs.store(group="dataset_reader_manager/dataset_reader", name="ghc_dataset_reader_schema", node=GHCDatasetReaderConfig)
+    cs.store(group="dataset_reader_manager/dataset_reader", name="jtc_dataset_reader_schema", node=JigsawToxicCommentsDatasetReaderConfig)
+    cs.store(group="dataset_reader_manager/dataset_reader", name="twitter_dataset_reader_schema", node=TwitterDatasetReaderConfig)
     cs.store(group="dataset_reader_manager", name="dataset_reader_manager_schema", node=DatasetReaderManagerConfig)
 
