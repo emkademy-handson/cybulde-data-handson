@@ -1,7 +1,5 @@
 defaults:
   - dataset_reader_manager_schema
-  - dataset_reader@_dataset_readers_dict.ghc: ghc_dataset_reader
-  - dataset_reader@_dataset_readers_dict.jigsaw_toxic_comments: jtc_dataset_reader
-  - dataset_reader@_dataset_readers_dict.twitter: twitter_dataset_reader
-
-dataset_readers: ${oc.dict.values:._dataset_readers_dict}
+  - dataset_reader@dataset_readers.ghc: ghc_dataset_reader
+  - dataset_reader@dataset_readers.jigsaw_toxic_comments: jtc_dataset_reader
+  - dataset_reader@dataset_readers.twitter: twitter_dataset_reader

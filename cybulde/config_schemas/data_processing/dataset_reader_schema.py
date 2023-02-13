@@ -33,8 +33,7 @@ class TwitterDatasetReaderConfig(DatasetReaderConfig):
 @dataclass
 class DatasetReaderManagerConfig:
     _target_: str = "cybulde.data_processing.dataset_readers.DatasetReaderManager"
-    dataset_readers: list[DatasetReaderConfig] = field(default_factory=lambda: [])
-    _dataset_readers_dict: dict[str, DatasetReaderConfig] = field(default_factory=lambda: {})
+    dataset_readers: dict[str, DatasetReaderConfig] = field(default_factory=lambda: {})
 
 
 def setup_config() -> None:
