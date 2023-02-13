@@ -34,6 +34,7 @@ class TwitterDatasetReaderConfig(DatasetReaderConfig):
 class DatasetReaderManagerConfig:
     _target_: str = "cybulde.data_processing.dataset_readers.DatasetReaderManager"
     dataset_readers: dict[str, DatasetReaderConfig] = field(default_factory=lambda: {})
+    repartition: bool = True
 
 
 def setup_config() -> None:

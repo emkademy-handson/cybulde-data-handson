@@ -1,0 +1,6 @@
+defaults:
+  - local_dask_cluster_schema
+
+n_workers: 12
+processes: true
+threads_per_worker: 1

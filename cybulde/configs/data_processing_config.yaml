@@ -5,9 +5,14 @@ defaults:
   - dataset_reader_manager: ghc_jigsaw_twitter
   - dataset_cleaner_manager: simple_dataset_cleaner
 
+  - dask_cluster: local_cluster
+
   - override hydra/job_logging: custom
   - override hydra/hydra_logging: disabled
   - _self_
+
+
+processed_data_save_dir: ./data/processed
 
 hydra:
   output_subdir: null

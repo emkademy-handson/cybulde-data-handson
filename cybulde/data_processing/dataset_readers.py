@@ -4,6 +4,7 @@ from typing import Optional
 
 import dask.dataframe as dd
 from dask_ml.model_selection import train_test_split
+from cybulde.utils.data_utils import repartition_dataframe
 
 from cybulde.utils.utils import get_logger
 
@@ -122,11 +123,14 @@ class TwitterDatasetReader(DatasetReader):
 
 
 class DatasetReaderManager:
-    def __init__(self, dataset_readers: dict[str, DatasetReader]) -> None:
+    def __init__(self, dataset_readers: dict[str, DatasetReader], repartition: bool) -> None:
         self.dataset_readers = dataset_readers
+        self.repartition = repartition
 
-    def read_data(self) -> dd.core.DataFrame:
+    def read_data(self, nrof_workers: int) -> dd.core.DataFrame:
         dfs = [dataset_reader.read_data() for dataset_reader in self.dataset_readers.values()]
         df = dd.concat(dfs)
+        if self.repartition:
+            df = repartition_dataframe(df, nrof_workers=nrof_workers)
         return df
         
